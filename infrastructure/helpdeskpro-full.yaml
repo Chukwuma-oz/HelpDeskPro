@@ -230,9 +230,7 @@ Resources:
     Type: AWS::EC2::LaunchTemplate
     Properties:
       LaunchTemplateName: HelpDeskPro-LaunchTemplate
-
       LaunchTemplateData:
-
         InstanceType: !Ref InstanceType
 
         ImageId: '{{resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64}}'
@@ -241,22 +239,19 @@ Resources:
           - !Ref EC2SecurityGroup
 
         UserData:
-          UserData:
-  Fn::Base64: !Sub |
-    #!/bin/bash
+          Fn::Base64: !Sub |
+            #!/bin/bash
 
-    dnf update -y
-    dnf install -y nodejs npm git
+            dnf update -y
+            dnf install -y nodejs npm git
 
-    rm -rf /opt/helpdeskpro
-    git clone https://github.com/Chukwuma-oz/HelpDeskPro.git /opt/helpdeskpro
+            rm -rf /opt/helpdeskpro
+            git clone https://github.com/Chukwuma-oz/HelpDeskPro.git /opt/helpdeskpro
 
-    cd /opt/helpdeskpro/backend
+            cd /opt/helpdeskpro/backend
+            npm ci
 
-    npm ci
-
-    nohup node server.js > /var/log/helpdeskpro.log 2>&1 &
-
+            nohup node server.js > /var/log/helpdeskpro.log 2>&1 &
   # ==========================================
   # AUTO SCALING GROUP
   # ==========================================
