@@ -1,3 +1,3 @@
 window.HELPDESKPRO_CONFIG = {
-  API_BASE: 'http://localhost:8080'
+  API_BASE: window.location.origin
 };
