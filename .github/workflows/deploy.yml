@@ -45,3 +45,13 @@ jobs:
             --template-file infrastructure/helpdeskpro-full.yaml \
             --capabilities CAPABILITY_IAM \
             --no-fail-on-empty-changeset
+      - name: Get ALB URL
+        id: alb
+        run: |
+          ALB_URL=$(aws cloudformation describe-stacks \
+            --stack-name HelpDeskPro-Stack \
+            --query "Stacks[0].Outputs[?OutputKey=='LoadBalancerURL'].OutputValue" \
+            --output text)
+
+            echo "ALB_URL=$ALB_URL" >> $GITHUB_ENV
+            echo "HelpDeskPro ALB URL: $ALB_URL"
