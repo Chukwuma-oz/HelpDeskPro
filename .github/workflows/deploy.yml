@@ -2,19 +2,46 @@ name: HelpDeskPro Practice
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
       - name: Install backend dependencies
         working-directory: backend
-        run: npm install
+        run: npm ci
+
       - name: Check backend syntax
         working-directory: backend
         run: node --check server.js
+
+      - name: Validate CloudFormation template
+        run: |
+          aws cloudformation validate-template \
+            --template-body file://infrastructure/helpdeskpro-full.yaml
+
+      - name: Deploy CloudFormation stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name HelpDeskPro-Stack \
+            --template-file infrastructure/helpdeskpro-full.yaml \
+            --capabilities CAPABILITY_IAM \
+            --no-fail-on-empty-changeset
