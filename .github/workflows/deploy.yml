@@ -1,0 +1,20 @@
+name: HelpDeskPro Practice
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install backend dependencies
+        working-directory: backend
+        run: npm install
+      - name: Check backend syntax
+        working-directory: backend
+        run: node --check server.js

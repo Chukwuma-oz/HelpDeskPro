@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HelpDeskPro</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header><h1>HelpDeskPro</h1><p>IT Support Ticket Management System</p></header>
+<main>
+<section class="panel">
+<h2>Submit a Support Ticket</h2>
+<form id="ticket-form">
+<input id="name" placeholder="Full name" required>
+<input id="email" type="email" placeholder="Email address" required>
+<input id="subject" placeholder="Subject" required>
+<select id="priority" required>
+<option value="">Select priority</option>
+<option>Low</option><option>Medium</option><option>High</option><option>Critical</option>
+</select>
+<textarea id="description" placeholder="Describe the problem" required></textarea>
+<button type="submit">Submit Ticket</button>
+</form>
+<p id="message"></p>
+</section>
+<section class="panel">
+<div class="section-title"><h2>Recent Tickets</h2><button id="refresh">Refresh</button></div>
+<div id="tickets"></div>
+</section>
+</main>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
