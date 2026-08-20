@@ -241,78 +241,21 @@ Resources:
           - !Ref EC2SecurityGroup
 
         UserData:
-          Fn::Base64: !Sub |
-            #!/bin/bash
+          UserData:
+  Fn::Base64: !Sub |
+    #!/bin/bash
 
-            dnf update -y
+    dnf update -y
+    dnf install -y nodejs npm git
 
-            dnf install -y nodejs npm
+    rm -rf /opt/helpdeskpro
+    git clone https://github.com/Chukwuma-oz/HelpDeskPro.git /opt/helpdeskpro
 
-            mkdir -p /opt/helpdeskpro
+    cd /opt/helpdeskpro/backend
 
-            cd /opt/helpdeskpro
+    npm ci
 
-            cat > package.json <<'EOF'
-            {
-              "name": "helpdeskpro",
-              "version": "1.0.0",
-              "main": "server.js",
-              "dependencies": {
-                "express": "^5.1.0",
-                "cors": "^2.8.5"
-              }
-            }
-            EOF
-
-            npm install
-
-            cat > server.js <<'EOF'
-            const express = require('express');
-            const cors = require('cors');
-
-            const app = express();
-
-            app.use(cors());
-            app.use(express.json());
-
-            app.get('/health', (req, res) => {
-              res.json({
-                status: 'ok',
-                server: process.env.HOSTNAME
-              });
-            });
-
-            app.get('/api/tickets', (req, res) => {
-              res.json([
-                {
-                  id: 1,
-                  name: 'Demo User',
-                  email: 'demo@example.com',
-                  subject: 'Cannot access email',
-                  description: 'Email login is not working.',
-                  priority: 'Medium',
-                  status: 'Open'
-                },
-                {
-                  id: 2,
-                  name: 'Admin User',
-                  email: 'admin@example.com',
-                  subject: 'Password reset',
-                  description: 'Password reset required.',
-                  priority: 'High',
-                  status: 'Open'
-                }
-              ]);
-            });
-
-            app.listen(8080, '0.0.0.0', () => {
-              console.log('HelpDeskPro running on port 8080');
-            });
-            EOF
-
-            npm install express cors
-
-            node server.js > /var/log/helpdeskpro.log 2>&1 &
+    nohup node server.js > /var/log/helpdeskpro.log 2>&1 &
 
   # ==========================================
   # AUTO SCALING GROUP
